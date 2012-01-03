@@ -1,0 +1,27 @@
+Superstate
+==========
+
+I looked a lot through Statemachine implementations and always missed something... So here is my take on it.
+
+My aim is to create something with a syntax like this:
+
+@@@
+
+new Superstate({
+  idle: new IdleState(),
+  movement: new MovementState({
+    walk: new WalkState(),
+    jump: new JumpState()
+  }),
+  attack: new AttackState({
+    kick: new KickAttackState(),
+    shotgun: new ShotgunAttackState({
+      primary: new ShotgunPrimaryState(),
+      secondary: new ShotgunSecondaryState()
+    })
+  })
+}).initialState("idle").to("walk");
+
+@@@
+
+... Just need some time to figure everything out.
