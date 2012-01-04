@@ -17,7 +17,10 @@ public class SuperstateMachine extends Superstate {
     _current_to = null;
     _current = null;
 
+    _paths = new Vector.<SuperstateMatchineStatePathInfo>();
     populatePaths(this, []);
+
+    trace("MACHINE:\n" + this);
   }
 
   /**
@@ -26,11 +29,12 @@ public class SuperstateMachine extends Superstate {
   private function populatePaths(current:Superstate, path_to_root:Array):void {
     var path_to_root_with_self:Array = path_to_root.concat([current]);
     for(var k:String in current.states) {
-      if(states.hasOwnProperty(k)) {
-        var s:Superstate = states[k];
+      if(current.states.hasOwnProperty(k)) {
+        var s:Superstate = current.states[k];
         s.name = k;
         s.machine = this;
         _paths.push(new SuperstateMatchineStatePathInfo(s, path_to_root_with_self));
+        populatePaths(s, path_to_root_with_self);
       }
     }
   }
@@ -94,6 +98,10 @@ public class SuperstateMachine extends Superstate {
 
     return [[],[]];
   }
+
+  public function toString():String {
+    return _paths.join("\n");
+  }
 }
 }
 
@@ -107,13 +115,13 @@ class SuperstateMatchineStatePathInfo {
   public function SuperstateMatchineStatePathInfo(self:Superstate, parents:Array) {
     _me = self;
     _parents = parents;
-    _string_path = "." + parents.map(function(el:Superstate, ...ignore):String { return el.name; })+ ".##";
+    _string_path = "." + parents.map(function(el:Superstate, ...ignore):String { return el.name; }) + _me.name + ".##";
   }
 
   public function get state():Superstate { return _me; }
   public function get parents():Array { return _parents; }
 
-  public function toString():String { return _string_path.substring(1, -3); }
+  public function toString():String { return _string_path; }//.substring(1, -3); }
 
   public function matches(name:String):Boolean {
     return _string_path.indexOf("." + name + ".##") !== -1;
