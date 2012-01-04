@@ -1,10 +1,9 @@
 package de.headjump.superstate {
 
-public class SuperstateMachine {
-  private var _states:Object;
+public class SuperstateMachine extends Superstate {
 
   public function SuperstateMachine(states:Object = null) {
-    _states = states;
+
   }
 }
 }
