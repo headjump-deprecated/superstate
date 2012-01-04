@@ -2,7 +2,8 @@ package de.headjump.superstate {
 
 public class SuperstateMachine extends Superstate {
   private var _paths:Vector.<SuperstateMatchineStatePathInfo>;
-  private var _current_path:Array;
+  private var _current_enter_path:Array;
+  private var _current_exit_path:Array;
   private var _current:Superstate;
   private var _current_from:Superstate;
   private var _current_to:Superstate;
@@ -74,8 +75,24 @@ public class SuperstateMachine extends Superstate {
     return this;
   }
 
+  /**
+   * Calc path, split in to path-where-to-exit-states and paths-where-to-enter-states
+   * @param from
+   * @param to
+   * @return
+   */
   private function pathFromTo(from:Superstate, to:Superstate):Array {
-    return null;
+    if(!(!!from && !!to)) return null;
+
+    var from_root_path:Array = SuperstateMatchineStatePathInfo(from.machine_path_info).parents;
+    var to_root_path:Array = SuperstateMatchineStatePathInfo(to.machine_path_info).parents;
+
+    var max_i:int = Math.max(from_root_path.length, to_root_path.length);
+    for(var i:int = 0; i < max_i; i++) {
+
+    }
+
+    return [[],[]];
   }
 }
 }
@@ -90,14 +107,15 @@ class SuperstateMatchineStatePathInfo {
   public function SuperstateMatchineStatePathInfo(self:Superstate, parents:Array) {
     _me = self;
     _parents = parents;
-    _string_path = "." + parents.map(function(el:Superstate, ...ignore):String { return el.name; })+ ".";
+    _string_path = "." + parents.map(function(el:Superstate, ...ignore):String { return el.name; })+ ".##";
   }
 
   public function get state():Superstate { return _me; }
+  public function get parents():Array { return _parents; }
 
-  public function toString():String { return _string_path.substring(1, -1); }
+  public function toString():String { return _string_path.substring(1, -3); }
 
   public function matches(name:String):Boolean {
-    return _string_path.indexOf("." + name + ".") !== -1;
+    return _string_path.indexOf("." + name + ".##") !== -1;
   }
 }

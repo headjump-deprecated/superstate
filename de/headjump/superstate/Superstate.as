@@ -5,6 +5,7 @@ public class Superstate {
   private var _hooks:Object;
   private var _machine:SuperstateMachine;
   private var _name:String;
+  private var _machine_path_info:Object;
 
   /**
    *
@@ -18,11 +19,15 @@ public class Superstate {
     _hooks = hooks;
     _machine = null;
     _name = ""; // set by machine
+    _machine_path_info = null;
   }
 
   protected function get hooks():Object { return _hooks; }
   public function get machine():SuperstateMachine { return _machine; }
   public function set machine(val:SuperstateMachine):void { _machine = val; }
+
+  internal function set machine_path_info(val:Object):void { _machine_path_info = val; }
+  internal function get machine_path_info():Object { return _machine_path_info; }
 
   public function set name(val:String):void { _name = val; }
   public function get name():String { return _name; }
