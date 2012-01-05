@@ -79,7 +79,8 @@ public class TestSuperstate extends OkTest {
     return new SuperstateMachine({
       one: new Superstate(hooks("1"), {
         two: new Superstate(hooks("2"), {
-          three: new Superstate(hooks("3"))
+          three: new Superstate(hooks("3")),
+          another_three: new Superstate(hooks("3b"))
         })
       }),
       uno: new Superstate(hooks("a"), {
@@ -131,9 +132,9 @@ public class TestSuperstate extends OkTest {
 
   public function testMoveAround():void {
     var history:Array = [];
-    var validateAndClearPath:Function = function(path:String):void {
-      eq(path, history.join(","), "valid path");
-      history.lenght = 0;
+    var validateAndClearPath:Function = function(path:String, msg:String = ""):void {
+      eq(history.join(","), path, "valid path" + (msg !== "" ? " - " : ""));
+      while(history.length > 0) history.pop();
     };
 
     var m:SuperstateMachine = sampleMachine(history);
@@ -141,7 +142,18 @@ public class TestSuperstate extends OkTest {
     validateAndClearPath("");
 
     m.to("three");
-    validateAndClearPath("in:1,in:2,in:3");
+    eq(m.current, m.stateByName("three"));
+    validateAndClearPath("in:1,in:2,in:3", "init path");
+
+    m.to("another_three");
+    eq(m.current, m.stateByName("another_three"));
+    validateAndClearPath("out:3,in:3b", "same depth");
+
+    m.to("one");
+    validateAndClearPath("out:3b,out:2", "up to 1");
+
+    m.to("uno");
+    validateAndClearPath("out:1,in:a", "same root depth");
   }
 }
 }
