@@ -66,7 +66,7 @@ public class SuperstateMachine extends Superstate {
 
     _current_from = current;
     _current_to = target;
-    var paths:Array = pathFromTo(current, target);
+    var paths:Array = exitAndEnterPathsFromTo(current, target);
     _current_exit_path = paths[0];
     _current_enter_path = paths[0];
 
@@ -88,7 +88,7 @@ public class SuperstateMachine extends Superstate {
    * @param to        to-state
    * @return          [states to exit, states to enter]
    */
-  public function pathFromTo(from:Superstate, to:Superstate):Array {
+  public function exitAndEnterPathsFromTo(from:Superstate, to:Superstate):Array {
     if(!to) throw new Error("Superstate: can't find 'to' target state");
 
     var to_root_path:Array = SuperstateMatchineStatePathInfo(to.machine_path_info).path_from_root;
@@ -103,7 +103,7 @@ public class SuperstateMachine extends Superstate {
       if(cf === ct) continue; // same path, continue
       if(cf === to) {
         // TO is parent of FROM -> go up
-        return [[],[]];
+        return [[from_root_path.slice(i + 1).concat([from]).reverse()],[]];
       }
     }
 

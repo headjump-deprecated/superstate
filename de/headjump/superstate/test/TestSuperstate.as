@@ -57,14 +57,34 @@ public class TestSuperstate extends OkTest {
     });
   }
 
-  public function testPathFromRoot():void {
-    var m:SuperstateMachine = new SuperstateMachine({
-      one: new Superstate(null, {
-        two: new Superstate(null, {
-          three: new Superstate()
+  private function sampleMachine(hook_output:Array = null):SuperstateMachine {
+    var hooks:Function = function(id:String):Object {
+      return {
+        enter: function():void {
+          if(hook_output) hook_output.push("in:"+id);
+        },
+        exit: function():void {
+          if(hook_output) hook_output.push("out:"+id);
+        }
+      }
+    };
+
+    return new SuperstateMachine({
+      one: new Superstate(hooks("1"), {
+        two: new Superstate(hooks("2"), {
+          three: new Superstate(hooks("3"))
+        })
+      }),
+      uno: new Superstate(hooks("a"), {
+        dos: new Superstate(hooks("b"), {
+          tres: new Superstate(hooks("c"))
         })
       })
     });
+  }
+
+  public function testPathFromRoot():void {
+    var m:SuperstateMachine = sampleMachine();
 
     ok(!!m.stateByName("three"));
     var p:Array = m.pathFromRootFor(m.stateByName("three"));
@@ -72,6 +92,16 @@ public class TestSuperstate extends OkTest {
 
     p = m.pathFromRootFor(m.stateByName("one"));
     eqArray(p, [], "empty path from root without self");
+  }
+
+  public function testMoveUp():void {
+    var m:SuperstateMachine = sampleMachine();
+
+    var paths:Array = m.exitAndEnterPathsFromTo(m.stateByName("three"), m.stateByName("one"));
+
+    eqArray([1,2,3],[1,2,3], "blsa!");
+    //eqArray(paths[0], [m.stateByName("three"), m.stateByName("two")], "Exit path");
+    eqArray(paths[1], [], "no enter path");
   }
 }
 }
