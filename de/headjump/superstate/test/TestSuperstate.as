@@ -52,7 +52,7 @@ public class TestSuperstate extends OkTest {
       })
     });
 
-    ok(m.stateByName("three"));
+    ok(!!m.stateByName("three"));
     var p:Array = m.pathFromRootFor(m.stateByName("three"));
     eqArray(p, [m.stateByName("one"), m.stateByName("two")], "Path from root in order without self");
 
