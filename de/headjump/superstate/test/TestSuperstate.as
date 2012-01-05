@@ -64,10 +64,14 @@ public class TestSuperstate extends OkTest {
     var hooks:Function = function(id:String):Object {
       return {
         enter: function():void {
-          if(hook_output) hook_output.push("in:"+id);
+          if(hook_output) {
+            hook_output.push("in:"+id);
+          }
         },
         exit: function():void {
-          if(hook_output) hook_output.push("out:"+id);
+          if(hook_output) {
+            hook_output.push("out:"+id);
+          }
         }
       }
     };
@@ -123,6 +127,21 @@ public class TestSuperstate extends OkTest {
 
     eqArray(paths[0], [m.stateByName("tres"), m.stateByName("dos"), m.stateByName("uno")], "exits");
     eqArray(paths[1], [m.stateByName("one"), m.stateByName("two"), m.stateByName("three")], "enters");
+  }
+
+  public function testMoveAround():void {
+    var history:Array = [];
+    var validateAndClearPath:Function = function(path:String):void {
+      eq(path, history.join(","), "valid path");
+      history.lenght = 0;
+    };
+
+    var m:SuperstateMachine = sampleMachine(history);
+
+    validateAndClearPath("");
+
+    m.to("three");
+    validateAndClearPath("in:1,in:2,in:3");
   }
 }
 }

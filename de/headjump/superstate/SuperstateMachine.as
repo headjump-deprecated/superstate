@@ -95,7 +95,7 @@ public class SuperstateMachine extends Superstate {
 
     var to_root_path:Array = SuperstateMatchineStatePathInfo(to.machine_path_info).path_from_root;
 
-    if(!from) return [[], to_root_path]; // initial state!
+    if(!from) return [[], to_root_path.concat(to)]; // initial state!
     var from_root_path:Array = SuperstateMatchineStatePathInfo(from.machine_path_info).path_from_root;
 
     var max_i:int = Math.max(from_root_path.length, to_root_path.length);
