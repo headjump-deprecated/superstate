@@ -44,10 +44,14 @@ public class SuperstateMachine extends Superstate {
    * @return
    */
   public function stateByName(name:String):Superstate {
+    var res:Superstate = null;
     for each(var s:SuperstateMatchineStatePathInfo in _paths) {
-      if(s.matches(name)) return s.state;
+      if(s.matches(name)) {
+        if(!!res) throw new Error("Can't determine which state to use for '" + name + "' because there are multiple possibilities:\n" + this);
+        res = s.state;
+      }
     }
-    return null;
+    return res;
   }
 
   public function get current_exit_path():Array { return _current_exit_path; }
@@ -116,7 +120,7 @@ public class SuperstateMachine extends Superstate {
     return pathInfoFor(state).path_from_root;
   }
 
-  public function toString():String {
+  public override function toString():String {
     return _paths.join("\n");
   }
 }

@@ -21,6 +21,10 @@ public class Superstate {
     _machine_path_info = null;
   }
 
+  public function toString():String {
+    return "STATE:" + name;
+  }
+
   protected function get hooks():Object { return _hooks; }
   public function get machine():SuperstateMachine { return _machine; }
   internal function setMachine(val:SuperstateMachine):void { _machine = val; }

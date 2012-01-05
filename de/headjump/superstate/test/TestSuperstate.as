@@ -43,6 +43,20 @@ public class TestSuperstate extends OkTest {
     neq(s_deep, m.stateByName("deep.bla"), "unfind with wrong parent");
   }
 
+  public function testErrorWhenNameNotDistinct():void {
+    var m:SuperstateMachine = new SuperstateMachine({
+      parent: new Superstate(null, {
+        child: new Superstate(null, {
+          child: new Superstate()
+        })
+      })
+    });
+
+    raises(Error, function():void {
+      m.stateByName("child");
+    });
+  }
+
   public function testPathFromRoot():void {
     var m:SuperstateMachine = new SuperstateMachine({
       one: new Superstate(null, {
