@@ -20,20 +20,27 @@ public class TestSuperstate extends OkTest {
   public function testByName():void {
     var s_idle:Superstate = new Superstate();
     var s_deep:Superstate = new Superstate();
+    var s_parent:Superstate;
 
     eq(s_idle.name, "", "init name blank");
 
     var m:SuperstateMachine = new SuperstateMachine({
       idle: s_idle,
-      something: new Superstate(null, {
+      something: s_parent = new Superstate(null, {
         deep: s_deep
       })
     });
 
     eq(s_idle.name, "idle", "machine sets names");
     eq(s_deep.name, "deep", "machine sets deep names");
+    eq(s_parent.name, "something", "machine sets deep names");
 
     eq(m.stateByName("idle"), s_idle, "find 'idle'");
+    eq(s_deep, m.stateByName("something.deep"), "find with parent");
+    eq(s_parent, m.stateByName("something"), "find parent");
+    neq(s_deep, m.stateByName("something.bla.deep"), "unfind with wrong parent");
+    neq(s_deep, m.stateByName("thing.deep"), "unfind with wrong parent");
+    neq(s_deep, m.stateByName("deep.bla"), "unfind with wrong parent");
   }
 }
 }

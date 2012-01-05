@@ -115,13 +115,13 @@ class SuperstateMatchineStatePathInfo {
   public function SuperstateMatchineStatePathInfo(self:Superstate, parents:Array) {
     _me = self;
     _parents = parents;
-    _string_path = "." + parents.map(function(el:Superstate, ...ignore):String { return el.name; }) + _me.name + ".##";
+    _string_path = "." + parents.map(function(el:Superstate, ...ignore):String { return el.name; }).join(".") + "." + _me.name + ".##";
   }
 
   public function get state():Superstate { return _me; }
   public function get parents():Array { return _parents; }
 
-  public function toString():String { return _string_path; }//.substring(1, -3); }
+  public function toString():String { return _string_path.substring(1, -3); }
 
   public function matches(name:String):Boolean {
     return _string_path.indexOf("." + name + ".##") !== -1;
