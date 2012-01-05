@@ -19,22 +19,21 @@ public class SuperstateMachine extends Superstate {
 
     _paths = new Vector.<SuperstateMatchineStatePathInfo>();
     populatePaths(this, []);
-
-    trace("MACHINE:\n" + this);
   }
 
   /**
    * Fill paths info with states and all their parents
    */
-  private function populatePaths(current:Superstate, path_to_root:Array):void {
-    var path_to_root_with_self:Array = path_to_root.concat([current]);
+  private function populatePaths(current:Superstate, path_from_root:Array):void {
     for(var k:String in current.states) {
       if(current.states.hasOwnProperty(k)) {
         var s:Superstate = current.states[k];
         s.name = k;
         s.machine = this;
-        _paths.push(new SuperstateMatchineStatePathInfo(s, path_to_root_with_self));
-        populatePaths(s, path_to_root_with_self);
+        var info:SuperstateMatchineStatePathInfo = new SuperstateMatchineStatePathInfo(s, path_from_root);
+        s.machine_path_info = info;
+        _paths.push(info);
+        populatePaths(s, path_from_root.concat([s]));
       }
     }
   }
@@ -81,22 +80,40 @@ public class SuperstateMachine extends Superstate {
 
   /**
    * Calc path, split in to path-where-to-exit-states and paths-where-to-enter-states
-   * @param from
-   * @param to
-   * @return
+   * @param from      from-state
+   * @param to        to-state
+   * @return          [states to exit, states to enter]
    */
-  private function pathFromTo(from:Superstate, to:Superstate):Array {
-    if(!(!!from && !!to)) return null;
+  public function pathFromTo(from:Superstate, to:Superstate):Array {
+    if(!to) throw new Error("Superstate: can't find 'to' target state");
 
-    var from_root_path:Array = SuperstateMatchineStatePathInfo(from.machine_path_info).parents;
-    var to_root_path:Array = SuperstateMatchineStatePathInfo(to.machine_path_info).parents;
+    var to_root_path:Array = SuperstateMatchineStatePathInfo(to.machine_path_info).path_from_root;
+
+    if(!from) return [[], to_root_path]; // initial state!
+    var from_root_path:Array = SuperstateMatchineStatePathInfo(from.machine_path_info).path_from_root;
 
     var max_i:int = Math.max(from_root_path.length, to_root_path.length);
     for(var i:int = 0; i < max_i; i++) {
-
+      var cf:Superstate = from_root_path[i];
+      var ct:Superstate = to_root_path[i];
+      if(cf === ct) continue; // same path, continue
+      if(cf === to) {
+        // TO is parent of FROM -> go up
+        return [[],[]];
+      }
     }
 
     return [[],[]];
+  }
+
+  private function pathInfoFor(state:Superstate):SuperstateMatchineStatePathInfo {
+    if(!state) return null;
+    return SuperstateMatchineStatePathInfo(state.machine_path_info);
+  }
+
+  public function pathFromRootFor(state:Superstate):Array {
+    if(!state) return null;
+    return pathInfoFor(state).path_from_root;
   }
 
   public function toString():String {
@@ -109,21 +126,21 @@ import de.headjump.superstate.Superstate;
 
 class SuperstateMatchineStatePathInfo {
   private var _me:Superstate;
-  private var _parents:Array;
+  private var _path_from_root:Array;
   private var _string_path:String;
 
-  public function SuperstateMatchineStatePathInfo(self:Superstate, parents:Array) {
+  public function SuperstateMatchineStatePathInfo(self:Superstate, path_from_root:Array) {
     _me = self;
-    _parents = parents;
-    _string_path = "." + parents.map(function(el:Superstate, ...ignore):String { return el.name; }).join(".") + "." + _me.name + ".##";
+    _path_from_root = path_from_root;
+    _string_path = ((path_from_root.length > 0) ? "." : "") + path_from_root.map(function(el:Superstate, ...ignore):String { return el.name; }).join(".") + "." + _me.name + "###";
   }
 
   public function get state():Superstate { return _me; }
-  public function get parents():Array { return _parents; }
+  public function get path_from_root():Array { return _path_from_root; }
 
-  public function toString():String { return _string_path.substring(1, -3); }
+  public function toString():String { return _string_path.substr(1, -4); }
 
   public function matches(name:String):Boolean {
-    return _string_path.indexOf("." + name + ".##") !== -1;
+    return _string_path.indexOf("." + name + "###") !== -1;
   }
 }

@@ -42,5 +42,22 @@ public class TestSuperstate extends OkTest {
     neq(s_deep, m.stateByName("thing.deep"), "unfind with wrong parent");
     neq(s_deep, m.stateByName("deep.bla"), "unfind with wrong parent");
   }
+
+  public function testPathFromRoot():void {
+    var m:SuperstateMachine = new SuperstateMachine({
+      one: new Superstate(null, {
+        two: new Superstate(null, {
+          three: new Superstate()
+        })
+      })
+    });
+
+    ok(m.stateByName("three"));
+    var p:Array = m.pathFromRootFor(m.stateByName("three"));
+    eqArray(p, [m.stateByName("one"), m.stateByName("two")], "Path from root in order without self");
+
+    p = m.pathFromRootFor(m.stateByName("one"));
+    eqArray(p, [], "empty path from root without self");
+  }
 }
 }
