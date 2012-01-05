@@ -103,7 +103,7 @@ public class SuperstateMachine extends Superstate {
       if(cf === ct) continue; // same path, continue
       if(cf === to) {
         // TO is parent of FROM -> go up
-        return [[from_root_path.slice(i + 1).concat([from]).reverse()],[]];
+        return [from_root_path.slice(i + 1).concat([from]).reverse(),[]];
       }
     }
 

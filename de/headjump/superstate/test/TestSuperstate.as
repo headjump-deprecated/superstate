@@ -1,4 +1,5 @@
 package de.headjump.superstate.test {
+import de.headjump.Helper;
 import de.headjump.superstate.Superstate;
 import de.headjump.superstate.SuperstateMachine;
 import de.headjump.tests.OkTest;
@@ -99,8 +100,7 @@ public class TestSuperstate extends OkTest {
 
     var paths:Array = m.exitAndEnterPathsFromTo(m.stateByName("three"), m.stateByName("one"));
 
-    eqArray([1,2,3],[1,2,3], "blsa!");
-    //eqArray(paths[0], [m.stateByName("three"), m.stateByName("two")], "Exit path");
+    eqArray(paths[0], [m.stateByName("three"), m.stateByName("two")], "Exit path");
     eqArray(paths[1], [], "no enter path");
   }
 }
