@@ -1,4 +1,5 @@
 package de.headjump.superstate {
+import de.headjump.superstate.Superstate;
 
 public class SuperstateMachine extends Superstate {
   private var _paths:Vector.<SuperstateMatchineStatePathInfo>;
@@ -60,8 +61,8 @@ public class SuperstateMachine extends Superstate {
   public function get current_from():Superstate { return _current_from; }
   public function get current_to():Superstate { return _current_to; }
 
-  public function to(state_name:String):SuperstateMachine {
-    var target:Superstate = stateByName(state_name);
+  public function to(state_or_name:*):SuperstateMachine {
+    var target:Superstate = state_or_name is Superstate ? state_or_name : stateByName(state_or_name);
     if(!target || target === current) return this; // state not found || already there: do nothing
 
     _current_from = current;
