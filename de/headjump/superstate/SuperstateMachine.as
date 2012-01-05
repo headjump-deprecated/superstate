@@ -68,9 +68,11 @@ public class SuperstateMachine extends Superstate {
     _current_to = target;
     var paths:Array = exitAndEnterPathsFromTo(current, target);
     _current_exit_path = paths[0];
-    _current_enter_path = paths[0];
+    _current_enter_path = paths[1];
 
     // move along paths
+    _current_exit_path.forEach(function(el:Superstate, ...ignore):void { el.onExit(); });
+    _current_enter_path.forEach(function(el:Superstate, ...ignore):void { el.onEnter(); });
 
     // reset
     _current_from = null;
@@ -105,6 +107,11 @@ public class SuperstateMachine extends Superstate {
         // TO is parent of FROM -> go up
         return [from_root_path.slice(i + 1).concat([from]).reverse(),[]];
       }
+      if(ct === from) {
+        // FROM is parent of TO -> go down
+        return [[],to_root_path.slice(i + 1).concat([to])];
+      }
+      return [from_root_path.slice(i).concat([from]).reverse(), to_root_path.slice(i).concat([to])]
     }
 
     return [[],[]];

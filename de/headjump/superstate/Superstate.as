@@ -10,7 +10,7 @@ public class Superstate {
   /**
    *
    * @param hooks.enter
-   * @param hooks.leave
+   * @param hooks.exit
    * @param children
    */
   public function Superstate(hooks:Object = null, children:Object = null) {
@@ -41,8 +41,8 @@ public class Superstate {
     if(_hooks && _hooks.enter) _hooks.enter();
   }
 
-  public function onLeave(path:Array):void {
-    if(_hooks && _hooks.leave) _hooks.leave(path);
+  public function onExit():void {
+    if(_hooks && _hooks.exit) _hooks.exit();
   }
 }
 }

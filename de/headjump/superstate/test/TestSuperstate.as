@@ -36,6 +36,8 @@ public class TestSuperstate extends OkTest {
     eq(s_deep.name, "deep", "machine sets deep names");
     eq(s_parent.name, "something", "machine sets deep names");
 
+    eq(m.stateByName("idle"), m.stateByName("idle"), "same object when same name");
+
     eq(m.stateByName("idle"), s_idle, "find 'idle'");
     eq(s_deep, m.stateByName("something.deep"), "find with parent");
     eq(s_parent, m.stateByName("something"), "find parent");
@@ -102,6 +104,25 @@ public class TestSuperstate extends OkTest {
 
     eqArray(paths[0], [m.stateByName("three"), m.stateByName("two")], "Exit path");
     eqArray(paths[1], [], "no enter path");
+  }
+
+  public function testMoveDown():void {
+    var m:SuperstateMachine = sampleMachine();
+
+    var paths:Array = m.exitAndEnterPathsFromTo(m.stateByName("one"), m.stateByName("three"));
+
+    eqArray(paths[0], [], "no exits");
+    eqArray(paths[1], [m.stateByName("two"), m.stateByName("three")], "just enter all below");
+  }
+
+  public function testMoveUpAndDown():void {
+    var m:SuperstateMachine = sampleMachine();
+
+    var paths:Array = m.exitAndEnterPathsFromTo(m.stateByName("tres"), m.stateByName("three"));
+    trace("PATH\n" + Helper.inspect(paths,  4));
+
+    eqArray(paths[0], [m.stateByName("tres"), m.stateByName("dos"), m.stateByName("uno")], "exits");
+    eqArray(paths[1], [m.stateByName("one"), m.stateByName("two"), m.stateByName("three")], "enters");
   }
 }
 }
