@@ -23,7 +23,7 @@ public class Superstate {
 
   protected function get hooks():Object { return _hooks; }
   public function get machine():SuperstateMachine { return _machine; }
-  public function set machine(val:SuperstateMachine):void { _machine = val; }
+  internal function setMachine(val:SuperstateMachine):void { _machine = val; }
 
   internal function set machine_path_info(val:Object):void { _machine_path_info = val; }
   internal function get machine_path_info():Object { return _machine_path_info; }

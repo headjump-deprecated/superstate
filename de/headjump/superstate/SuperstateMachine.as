@@ -29,7 +29,7 @@ public class SuperstateMachine extends Superstate {
       if(current.states.hasOwnProperty(k)) {
         var s:Superstate = current.states[k];
         s.name = k;
-        s.machine = this;
+        s.setMachine(this);
         var info:SuperstateMatchineStatePathInfo = new SuperstateMatchineStatePathInfo(s, path_from_root);
         s.machine_path_info = info;
         _paths.push(info);
