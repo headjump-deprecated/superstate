@@ -63,6 +63,7 @@ public class SuperstateMachine extends Superstate {
 
   public function to(state_or_name:*):SuperstateMachine {
     var target:Superstate = state_or_name is Superstate ? state_or_name : stateByName(state_or_name);
+    if(!target) throw new Error("Target state not found! " + state_or_name);
     if(!target || target === current) return this; // state not found || already there: do nothing
 
     _current_from = current;
