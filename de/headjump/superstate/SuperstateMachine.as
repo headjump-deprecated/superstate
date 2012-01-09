@@ -1,5 +1,4 @@
 package de.headjump.superstate {
-import de.headjump.superstate.Superstate;
 
 public class SuperstateMachine extends Superstate {
   private var _paths:Vector.<SuperstateMatchineStatePathInfo>;
@@ -113,7 +112,6 @@ public class SuperstateMachine extends Superstate {
         // FROM is parent of TO -> go down
         return [[],to_root_path.slice(i + 1).concat([to])];
       }
-      trace("OUT !==" + i);
       return [from_root_path.slice(i).concat([from]).reverse(), to_root_path.slice(i).concat([to])]
     }
 
